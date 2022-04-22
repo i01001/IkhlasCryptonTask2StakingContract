@@ -10,7 +10,7 @@ contract IkhlasToken {
     uint8 _decimals;
     uint _totalSupply;
     address owner_;
-    address stakingContract;
+    address public stakingContract;
 
  
     mapping(address => uint) balances;

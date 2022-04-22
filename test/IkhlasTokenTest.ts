@@ -43,6 +43,19 @@ let signers: any;
     expect(await ikhlasToken.decimals()).to.equal(18);
   })
 
+  it("Should not allow non-owner to run the setStakingContract function", async () => {
+    const [signers, second, third] = await ethers.getSigners();
+    const ikhlasToken = await new IkhlasToken__factory(signers).deploy();
+    await expect(ikhlasToken.connect(second).setStakingContract(second.address)).to.be.revertedWith('This transaction can only be carried out by owner!');
+  });
+
+  it("Should allow owner to run the setStakingContract function", async () => {
+    const [signers, second, third] = await ethers.getSigners();
+    const ikhlasToken = await new IkhlasToken__factory(signers).deploy();
+    await ikhlasToken.connect(signers).setStakingContract("0x0000000000000000000000000000000000000000");
+    await expect (await ikhlasToken.stakingContract()).to.be.equal("0x0000000000000000000000000000000000000000");
+  });
+
   it("Should return the name with the name function", async () => {
     const signers = await ethers.getSigners();
     const ikhlasToken = await new IkhlasToken__factory(signers[0]).deploy();
@@ -155,6 +168,15 @@ let signers: any;
     const ikhlasToken = await new IkhlasToken__factory(signers).deploy();
     await ikhlasToken.connect(signers).transfer(second.address, (ethers.utils.parseUnits("1", 20)));
     expect (await ikhlasToken.connect(signers).burn(second.address, (ethers.utils.parseUnits("1", 20)))).to.emit(ikhlasToken, "Transfer").withArgs(second.address, '0x0000000000000000000000000000000000000000', (ethers.utils.parseUnits("1", 20)));
+  });
+
+  it("Should go to fallback if non function is called", async () => {
+    const [signers, second, third] = await ethers.getSigners();
+    const ikhlasToken = await new IkhlasToken__factory(signers).deploy();
+    // await ikhlasToken.connect(signers).wrongdunction(second.address, (ethers.utils.parseUnits("1", 20)));
+    expect (await ikhlasToken.connect(signers).wrongfunction(second.address, (ethers.utils.parseUnits("1", 20)))).to.be.revertedWith('error');
+    
+    // emit(ikhlasToken, "Transfer").withArgs(second.address, '0x0000000000000000000000000000000000000000', (ethers.utils.parseUnits("1", 20)));
   });
 
 });
