@@ -166,11 +166,4 @@ contract StakingIkhlasToken{
 }
 
 
-// update readme...with all requirement...see if good way to update
-// do unit testing plus initation as in discord s
-// uniswap LP
-// Set up tasks check?
-// add correct comments type for ERC 
-// Do all testing, check for fallback activation,
-// Optional - add option to do partial unstaking and claiming, 
-// ....also unstake does not do claim ?..
+
