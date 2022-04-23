@@ -74,31 +74,10 @@ describe("Testing LP-staking with fork", () =>{
         const Staking = await ethers.getContractFactory("StakingIkhlasToken");
         staking = <StakingIkhlasToken>(await Staking.deploy());
         await staking.deployed();
-
         await token.transfer(staking.address,  ethers.utils.parseUnits("90000", await token.decimals()));
-
         await lptoken.connect(staker_one).approve(staking.address, ethers.utils.parseUnits("1000", await lptoken.decimals()));
         await lptoken.connect(staker_two).approve(staking.address, ethers.utils.parseUnits("1000", await lptoken.decimals()));
-
-        clean = await network.provider.request({
-            method: "evm_snapshot",
-            params: []
-        }); 
     });
-
-    describe("Pool setup and Staker deployment", () => {
-        it("UniSwap: Liquidity minted", async () => {
-            expect(await lptoken.balanceOf(staker_one.address)).to.be.eq(
-                ethers.utils.parseUnits(Math.sqrt(10_000*1).toString(), await lptoken.decimals()).sub(MIN_LIQUIDITY) // uniswap liquidity calcucalted, k = sqrt(a*b)
-            );
-            expect(await lptoken.balanceOf(staker_one.address)).to.be.eq(
-                ethers.utils.parseUnits(Math.sqrt(10_000*1).toString(), await lptoken.decimals()).sub(MIN_LIQUIDITY)
-            );
-            expect(await lptoken.totalSupply()).to.be.eq(
-                ethers.utils.parseUnits(Math.sqrt(10_000*1).toString(), await lptoken.decimals()).mul(2)
-        );
-        })
-});
 
     describe("Checking constructor correctly run", () => {
         it("Checks the contract owner is correctly set as owner", async () => {
@@ -127,8 +106,6 @@ describe("Testing LP-staking with fork", () =>{
         it("Checks whether after the 10 minute period has passed staking is accepted", async () => {
             await evm_increaseTime(10*60);
             await token.connect(owner).setStakingContract(staking.address);
-            // let after = await token.connect(staker_one).balanceOf(staker_one.address);
-            console.log(await token.connect(staker_one).balanceOf(staker_one.address));
             expect(await staking.connect(staker_one).stake(ethers.utils.parseUnits("100"))).to.emit(staking, "staked").withArgs();
         })       
         it("Check whether a second stake by same user is accepted", async () => {
@@ -140,7 +117,6 @@ describe("Testing LP-staking with fork", () =>{
         })
         it("Checks whether the claim function works after the 10 minutes", async () => {
             await evm_increaseTime(10*60);
-            console.log(await token.connect(staker_one).balanceOf(staker_one.address));
             await expect(staking.connect(staker_one).claim()).to.emit(staking, "_unstake").withArgs(staker_one.address, 1, ethers.utils.parseUnits("4"));
         })
         it("Checks whether the unstake function does not return any rewards within 20 minutes of unstake/claim", async () => {
