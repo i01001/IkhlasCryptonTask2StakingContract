@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import "hardhat/console.sol";
 
@@ -36,9 +36,9 @@ contract StakingIkhlasToken{
     /// @notice targetAddress is the address of the ERC20 Token
     /// @dev The targetAddress needs to be entered in a function below after deploying this contract
     stakersInfo[] StakersInfo;
-    address _owner;
+    address public _owner;
     uint _initialTimeStamp;
-    uint rewardrate = 2;
+    uint public rewardrate = 2;
     bool _freeze;
     address public targetAddress;
 
@@ -164,6 +164,4 @@ contract StakingIkhlasToken{
        return true;
    }
 }
-
-
 
